@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net"
 
-	"go_code/chatroom/client/common/message"
+	"github.com/chao-ying/chatroom/common/message"
 )
 
 //写一个函数，完成登陆
@@ -41,7 +41,7 @@ func login(userId int, userPwd string) (err error) {
 		return
 	}
 	//5.把data赋给mes.Data字段
-	mes.data = string(data)
+	mes.Data = string(data)
 
 	//6.将mes进行序列化
 	data, err = json.Marshal(mes)
@@ -56,13 +56,24 @@ func login(userId int, userPwd string) (err error) {
 	// conn.Write(len(data))
 	var pkgLen uint32
 	pkgLen = uint32(len(data))
-	var bytes [4]byte
+	var bytes [4]byte //1 个int =4个byte
+
 	binary.BigEndian.PutUint32(bytes[0:4], pkgLen)
 	//发送长度
-	n, err := conn.Write(bytes)
+	n, err := conn.Write(bytes[0:4])
 	if n != 4 || err != nil {
 		fmt.Println("conn.Write(bytes) fail", err)
 		return
 	}
-	fmt.Println("客户端发送消息的长度ok")
+	//fmt.Printf("客户端发送消息的长度=%d, 内容=%s\n", len(data), string(data))
+
+	//发送信息本身
+	_, err := conn.Write(data)
+	if n != 4 || err != nil {
+		fmt.Println("conn.Write(data) fail", err)
+		return
+	}
+	//这里还需要处理服务器端门返回的信息
+
+	return
 }
