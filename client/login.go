@@ -68,12 +68,26 @@ func login(userId int, userPwd string) (err error) {
 	//fmt.Printf("客户端发送消息的长度=%d, 内容=%s\n", len(data), string(data))
 
 	//发送信息本身
-	_, err := conn.Write(data)
-	if n != 4 || err != nil {
+	_, err = conn.Write(data)
+	if err != nil {
 		fmt.Println("conn.Write(data) fail", err)
 		return
 	}
 	//这里还需要处理服务器端门返回的信息
+	mes, err = readPkg(conn) //mes就是
+	if err != nil {
+		fmt.Println("readPkg(conn) err=", err)
+		return
+	}
 
+	//将mes的Data部分反序列化成LoginResMes
+	var loginResMes message.LoginResMes
+	err = json.Unmarshal([]byte(mes.Data), &loginResMes)
+
+	if loginResMes.Code == 200 {
+		fmt.Println("登陆成功！")
+	} else if loginResMes.Code == 500 {
+		fmt.Println(loginResMes.Error)
+	}
 	return
 }

@@ -45,12 +45,12 @@ func main() {
 		fmt.Scanf("%s\n", &userPwd)
 
 		//先把登陆的函数写到另一个文件，login.go
-		err := login(userId, userPwd)
-		if err != nil {
-			fmt.Println("登陆失败")
-		} else {
-			fmt.Println("登陆成功")
-		}
+		login(userId, userPwd)
+		// if err != nil {
+		// 	fmt.Println("登陆失败")
+		// } else {
+		// 	fmt.Println("登陆成功")
+		// }
 	} else if key == 2 {
 		fmt.Println("进行用户注册的逻辑")
 	}
